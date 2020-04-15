@@ -147,12 +147,6 @@ Base URLs:
 }
 ```
 
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<password>string</password>
-<username>string</username>
-```
-
 <h3 id="зайти-в-систему-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
