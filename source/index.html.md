@@ -1,20 +1,16 @@
 ---
 title: Astrak API v1.0
 language_tabs:
-  - "'js": Javascript'
-  - "'python": Python'
-language_clients:
-  - "'js": ""
-  - "'python": ""
-toc_footers: []
+  - "python": Python
+  - "js": Javascript
+toc_footers: 
+  - <a href="https://teleg.run/astrakme">(!) Мы в телеграме</a>
 includes: []
 search: true
 highlight_theme: darkula
 headingLevel: 2
 
 ---
-
-<!-- Generator: Widdershins v4.0.1 -->
 
 <h1 id="astrak-api">Astrak API v1.0</h1>
 
@@ -25,6 +21,8 @@ headingLevel: 2
 Base URLs:
 
 * <a href="http://afternoon-dusk-97603.herokuapp.com/">http://afternoon-dusk-97603.herokuapp.com/</a>
+
+Релизы астрак: https://github.com/catofsof/astrak
 
 ## Указание Callback для получения событий
 
@@ -80,6 +78,34 @@ Base URLs:
 <a id="opIdpost-events-polling"></a>
 
 `POST /events/polling`
+
+> Пример бота
+
+```python
+from astrak import Astrak, Dispatcher, TaskManager
+from astrak.types import Message
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+astrak = Astrak(username="username", password="password")
+dp = Dispatcher(astrak)
+
+
+@dp.message_handler(text="привет")
+async def text_handler(message: Message):
+    await message.answer("И тебе привет!")
+
+
+@dp.message_handler(text_contains="шуе")
+async def text_handler(message: Message):
+    await message.answer("ППШ")
+
+
+task_manager = TaskManager(astrak.loop)
+task_manager.add_task(dp.dispatch_forever())
+task_manager.run()
+```
 
 Ждем ответ сервера. Как только произойдет какое-либо событие, сервер сразу вернет вам ответ.
 События приходят одинаковыми как для Callback, так и для Long Polling.
@@ -186,9 +212,6 @@ Base URLs:
 
 Запрос проверяет токен на валидность.
 
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-
 ## Отправить сообщение пользователю
 
 <a id="opIdpost-messages-send"></a>
@@ -221,6 +244,29 @@ Base URLs:
 
 `GET /messages/dialogs`
 
+> Пример кода
+
+```python
+from astrak import Astrak
+import asyncio
+
+astrak_api = Astrak(username="username", password="password")
+
+
+async def main():
+    me = await astrak_api.get_me()
+    print(me.id)
+
+    dialogs = await astrak_api.get_all_dialogs()
+    print(dialogs)
+
+    await astrak_api.session.close()
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
+```
+
 Возращает массив со всеми диалогами пользователя.
 
 > Body parameter
@@ -236,9 +282,6 @@ Base URLs:
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
 |token|body|string|true|none|
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
 
 ## Получить сообщения из диалога
 
@@ -263,9 +306,6 @@ Base URLs:
 |---|---|---|---|---|
 |token|body|string|true|none|
 |id|body|string|true|none|
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
 
 ## Удалить сообщение
 

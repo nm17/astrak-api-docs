@@ -1,3 +1,6 @@
+
+
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -38,10 +41,9 @@ window.onpopstate = function() {
     
     <meta name="theme-color" content="#F3F7F9" />
 <!-- Renderer: Shins v2.4.1-0 -->
-<!-- Generator: Widdershins v4.0.1 -->
   </head>
 
-  <body data-languages="[&quot;'js&quot;,&quot;'python&quot;]">
+  <body data-languages="[&quot;python&quot;,&quot;js&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -54,11 +56,11 @@ window.onpopstate = function() {
         <div class="lang-selector">
           
             
-              <a href="#" data-language-name="&#39;js">Javascript&#39;</a>
+              <a href="#" data-language-name="python">Python</a>
             
           
             
-              <a href="#" data-language-name="&#39;python">Python&#39;</a>
+              <a href="#" data-language-name="js">Javascript</a>
             
           
         </div>
@@ -136,6 +138,8 @@ window.onpopstate = function() {
       
         <ul class="toc-footer">
           
+            <li><a href="https://teleg.run/astrakme">(!) Мы в телеграме</a></li>
+          
         </ul>
       
     </div>
@@ -151,6 +155,7 @@ window.onpopstate = function() {
 <ul>
 <li><a href="http://afternoon-dusk-97603.herokuapp.com/">http://afternoon-dusk-97603.herokuapp.com/</a></li>
 </ul>
+<p>Релизы астрак: <a href="https://github.com/catofsof/astrak">https://github.com/catofsof/astrak</a></p>
 <h2 id="---------callback----------------------">Указание Callback для получения событий</h2>
 <p><a id="opIdpost-events-callback-start"></a></p>
 <p><code>POST /events/callback/start</code></p>
@@ -212,6 +217,33 @@ window.onpopstate = function() {
 <h2 id="----------------------------long-polling">Получение событий с помощью Long Polling</h2>
 <p><a id="opIdpost-events-polling"></a></p>
 <p><code>POST /events/polling</code></p>
+<blockquote>
+<p>Пример бота</p>
+</blockquote>
+<pre class="highlight tab tab-python"><code><span class="hljs-keyword">from</span> astrak <span class="hljs-keyword">import</span> Astrak, Dispatcher, TaskManager
+<span class="hljs-keyword">from</span> astrak.types <span class="hljs-keyword">import</span> Message
+<span class="hljs-keyword">import</span> logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+astrak = Astrak(username=<span class="hljs-string">"username"</span>, password=<span class="hljs-string">"password"</span>)
+dp = Dispatcher(astrak)
+
+
+<span class="hljs-meta">@dp.message_handler(text="привет")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">text_handler</span><span class="hljs-params">(message: Message)</span>:</span>
+    <span class="hljs-keyword">await</span> message.answer(<span class="hljs-string">"И тебе привет!"</span>)
+
+
+<span class="hljs-meta">@dp.message_handler(text_contains="шуе")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">text_handler</span><span class="hljs-params">(message: Message)</span>:</span>
+    <span class="hljs-keyword">await</span> message.answer(<span class="hljs-string">"ППШ"</span>)
+
+
+task_manager = TaskManager(astrak.loop)
+task_manager.add_task(dp.dispatch_forever())
+task_manager.run()
+</code></pre>
 <p>Ждем ответ сервера. Как только произойдет какое-либо событие, сервер сразу вернет вам ответ.
 События приходят одинаковыми как для Callback, так и для Long Polling.</p>
 <blockquote>
@@ -305,10 +337,6 @@ window.onpopstate = function() {
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"string"</span>
 }
 </code></pre>
-<pre class="highlight tab tab-xml"><code><span class="php"><span class="hljs-meta">&lt;?</span>xml version=<span class="hljs-string">"1.0"</span> encoding=<span class="hljs-string">"UTF-8"</span> <span class="hljs-meta">?&gt;</span></span>
-<span class="hljs-tag">&lt;<span class="hljs-name">password</span>&gt;</span>string<span class="hljs-tag">&lt;/<span class="hljs-name">password</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">username</span>&gt;</span>string<span class="hljs-tag">&lt;/<span class="hljs-name">username</span>&gt;</span>
-</code></pre>
 <h3 id="----------------parameters">Parameters</h3>
 <table>
 <thead>
@@ -381,17 +409,6 @@ window.onpopstate = function() {
 <p><a id="opIdget-users-check"></a></p>
 <p><code>GET /users/check</code></p>
 <p>Запрос проверяет токен на валидность.</p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Meaning</th>
-<th>Description</th>
-<th>Schema</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
 <h2 id="--------------------------------">Отправить сообщение пользователю</h2>
 <p><a id="opIdpost-messages-send"></a></p>
 <p><code>POST /messages/send</code></p>
@@ -443,6 +460,28 @@ window.onpopstate = function() {
 <h2 id="------------------------">Получить список диалогов</h2>
 <p><a id="opIdget-messages-dialogs"></a></p>
 <p><code>GET /messages/dialogs</code></p>
+<blockquote>
+<p>Пример кода</p>
+</blockquote>
+<pre class="highlight tab tab-python"><code><span class="hljs-keyword">from</span> astrak <span class="hljs-keyword">import</span> Astrak
+<span class="hljs-keyword">import</span> asyncio
+
+astrak_api = Astrak(username=<span class="hljs-string">"username"</span>, password=<span class="hljs-string">"password"</span>)
+
+
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main</span><span class="hljs-params">()</span>:</span>
+    me = <span class="hljs-keyword">await</span> astrak_api.get_me()
+    print(me.id)
+
+    dialogs = <span class="hljs-keyword">await</span> astrak_api.get_all_dialogs()
+    print(dialogs)
+
+    <span class="hljs-keyword">await</span> astrak_api.session.close()
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
+</code></pre>
 <p>Возращает массив со всеми диалогами пользователя.</p>
 <blockquote>
 <p>Body parameter</p>
@@ -471,17 +510,6 @@ window.onpopstate = function() {
 <td>none</td>
 </tr>
 </tbody>
-</table>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Meaning</th>
-<th>Description</th>
-<th>Schema</th>
-</tr>
-</thead>
-<tbody></tbody>
 </table>
 <h2 id="-----------------------------">Получить сообщения из диалога</h2>
 <p><a id="opIdget-messages-dialog"></a></p>
@@ -522,17 +550,6 @@ window.onpopstate = function() {
 <td>none</td>
 </tr>
 </tbody>
-</table>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Meaning</th>
-<th>Description</th>
-<th>Schema</th>
-</tr>
-</thead>
-<tbody></tbody>
 </table>
 <h2 id="-----------------">Удалить сообщение</h2>
 <p><a id="opIdpost-messages-delete"></a></p>
@@ -575,18 +592,17 @@ window.onpopstate = function() {
 </tbody>
 </table>
 <!-- Renderer: Shins v2.4.1-0 -->
-<!-- Generator: Widdershins v4.0.1 -->
       </div>
       <div class="dark-box">
         
           <div class="lang-selector">
             
               
-                <a href="#" data-language-name="&#39;js">Javascript&#39;</a>
+                <a href="#" data-language-name="python">Python</a>
               
             
               
-                <a href="#" data-language-name="&#39;python">Python&#39;</a>
+                <a href="#" data-language-name="js">Javascript</a>
               
             
           </div>
